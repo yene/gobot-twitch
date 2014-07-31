@@ -6,15 +6,18 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 )
 
 func main() {
-	//favorites := []string{"zai", "fogged", "draskyl", "sing_sing", "d"}
-	// parse with https://api.twitch.tv/kraken/streams?game=Dota+2&limit=10&channel=zai,sing_sing,draskyl
+	//topDota2Streams()
+	favoriteDota2Streams()
+}
 
-	// https://api.twitch.tv/kraken/streams/
-
-	requestURL := "https://api.twitch.tv/kraken/streams?game=Dota+2&limit=10"
+func favoriteDota2Streams() {
+	favorites := []string{"zai", "fogged", "draskyl", "sing_sing", "d"}
+	concatenated := strings.Join(favorites, ",")
+	requestURL := "https://api.twitch.tv/kraken/streams?game=Dota+2&limit=10&channel=" + concatenated
 	res, err := http.Get(requestURL)
 	if err != nil {
 		log.Fatal(err)
@@ -34,8 +37,28 @@ func main() {
 		fmt.Println("Stream: " + g.Channel.Name + " - " + g.Channel.Status + " - " + g.Channel.URL)
 	}
 
-	//https://api.twitch.tv/channels/sing_sing stream == null?
+}
 
+func topDota2Streams() {
+	requestURL := "https://api.twitch.tv/kraken/streams?game=Dota+2&limit=10"
+	res, err := http.Get(requestURL)
+	if err != nil {
+		log.Fatal(err)
+	}
+	streams, err := ioutil.ReadAll(res.Body)
+	res.Body.Close()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var dat JSONResult
+	if err := json.Unmarshal(streams, &dat); err != nil {
+		panic(err)
+	}
+
+	for _, g := range dat.Streams {
+		fmt.Println("Stream: " + g.Channel.Name + " - " + g.Channel.Status + " - " + g.Channel.URL)
+	}
 }
 
 func clientID() string {
