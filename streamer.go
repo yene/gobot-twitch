@@ -15,8 +15,8 @@ func main() {
 }
 
 func favoriteDota2Streams() {
-	favorites := []string{"zai", "fogged", "draskyl", "sing_sing", "d"}
-	concatenated := strings.Join(favorites, ",")
+	favorites := favoriteStreams()
+	concatenated := strings.Replace(favorites, "\n", ",", -1)
 	requestURL := "https://api.twitch.tv/kraken/streams?game=Dota+2&limit=10&channel=" + concatenated
 	res, err := http.Get(requestURL)
 	if err != nil {
@@ -63,6 +63,14 @@ func topDota2Streams() {
 
 func clientID() string {
 	file, e := ioutil.ReadFile("./client.id")
+	if e != nil {
+		panic(e)
+	}
+	return string(file)
+}
+
+func favoriteStreams() string {
+	file, e := ioutil.ReadFile("./favorites.txt")
 	if e != nil {
 		panic(e)
 	}
