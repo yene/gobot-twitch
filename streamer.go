@@ -10,8 +10,8 @@ import (
 )
 
 func main() {
-	//topDota2Streams()
-	favoriteDota2Streams()
+	topDota2Streams()
+	//favoriteDota2Streams()
 }
 
 func favoriteDota2Streams() {
@@ -57,7 +57,9 @@ func topDota2Streams() {
 	}
 
 	for _, g := range dat.Streams {
-		fmt.Println("Stream: " + g.Channel.Name + " - " + g.Channel.Status + " - " + g.Channel.URL)
+		if !isBlacklisted(g.Channel.Name) {
+			fmt.Println("Stream: " + g.Channel.Name + " - " + g.Channel.Status + " - " + g.Channel.URL)
+		}
 	}
 }
 
@@ -75,6 +77,24 @@ func favoriteStreams() string {
 		panic(e)
 	}
 	return string(file)
+}
+
+func blacklistStreams() []string {
+	file, e := ioutil.ReadFile("./blacklist.txt")
+	if e != nil {
+		panic(e)
+	}
+	return strings.Split(string(file), "\n")
+}
+
+func isBlacklisted(stream string) bool {
+	blacklist := blacklistStreams()
+	for _, b := range blacklist {
+		if b == stream {
+			return true
+		}
+	}
+	return false
 }
 
 // JSON structs
