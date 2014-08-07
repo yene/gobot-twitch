@@ -1,4 +1,4 @@
-package main
+package streamer
 
 import (
 	"encoding/json"
@@ -9,12 +9,7 @@ import (
 	"strings"
 )
 
-func main() {
-	topDota2Streams()
-	//favoriteDota2Streams()
-}
-
-func favoriteDota2Streams() {
+func FavoriteDota2Streams() {
 	favorites := favoriteStreams()
 	concatenated := strings.Replace(favorites, "\n", ",", -1)
 	requestURL := "https://api.twitch.tv/kraken/streams?game=Dota+2&limit=10&channel=" + concatenated
@@ -39,7 +34,7 @@ func favoriteDota2Streams() {
 
 }
 
-func topDota2Streams() {
+func TopDota2Streams() {
 	requestURL := "https://api.twitch.tv/kraken/streams?game=Dota+2&limit=10"
 	res, err := http.Get(requestURL)
 	if err != nil {
